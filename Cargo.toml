@@ -1,0 +1,28 @@
+[package]
+name = "rust-gomoku"
+version = "0.0.1"
+authors = ["Namkyu Park <lak9348@gmail.com>"]
+edition = "2018"
+description = "A console and web-based Gomoku written in Rust and WebAssembly"
+readme = "README.md"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = ["console_error_panic_hook"]
+
+[dependencies]
+wasm-bindgen = "0.2.63"
+console_error_panic_hook = { version = "0.1.6", optional = true }
+wee_alloc = { version = "0.4.5", optional = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.13"
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
