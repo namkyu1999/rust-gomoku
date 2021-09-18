@@ -1,6 +1,6 @@
 [package]
 name = "rust-gomoku"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Namkyu Park <lak9348@gmail.com>"]
 edition = "2018"
 description = "A console and web-based Gomoku written in Rust and WebAssembly"
