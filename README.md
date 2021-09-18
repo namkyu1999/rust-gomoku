@@ -7,9 +7,23 @@ A console and web-based Gomoku written in Rust and WebAssembly
   <img src="https://user-images.githubusercontent.com/53862866/133866229-ca90be8f-4fb0-4be2-a252-1d27656bc634.gif" height="450px">
 </p>
 
-## Getting started with wasm-pack & npm
+## Getting started with cargo & npm
 
-Get wasm-pack [here!](https://rustwasm.github.io/wasm-pack/installer/)
+Install required program, run
+```bash
+# install cargo & wasm-pack
+curl https://sh.rustup.rs -sSf | sh
+source $HOME/.cargo/env
+curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
+# install npm
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+sudo apt-get install nodejs -y
+```
+Go project root, run
+```bash
+cd rust-gomoku
+```
 
 For a system with Webassembly, run
 ```bash
