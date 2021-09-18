@@ -1,6 +1,7 @@
 mod utils;
 
 use wasm_bindgen::prelude::*;
+use std::cmp::{max};
 
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
@@ -29,14 +30,25 @@ pub enum Direction {
 pub struct Universe {
     width: u32,
     height: u32,
+    turn: u32,
     cells: Vec<Cell>,
 }
 
 #[wasm_bindgen]
 impl Universe {
 
-    pub fn toggle(&mut self, row: u32, col: u32, color: Cell) {
-        self.set_cell(row, col, color.clone());
+    fn next_turn(&mut self){
+        self.turn = self.turn.clone() + 1;
+    }
+
+    pub fn toggle(&mut self, row: u32, col: u32) {
+        
+        let turn = if self.turn % 2 == 0 { Cell::Black } else { Cell::White };
+
+        self.set_cell(row, col, turn);
+        
+        self.next_turn();
+
     }
 
     fn get_index(&self, row: u32, column: u32) -> usize {
@@ -54,7 +66,7 @@ impl Universe {
                 match direction {
                     Direction::Horizontal => count += self.direction_count(color,direction,row,column+1),
                     Direction::Vertical => count += self.direction_count(color,direction,row+1,column),
-                    Direction::Diagonal => count += self.direction_count(color,direction,row+1,column+1),
+                    Direction::Diagonal => count += max(self.direction_count(color,direction,row+1,column+1),self.direction_count(color,direction,row+1,column-1)),
                 }
                 count
             }else{
@@ -88,9 +100,10 @@ impl Universe {
     pub fn new() -> Universe {
         let width = 15;
         let height = 15;
+        let turn = 0;
 
         let cells = (0..width * height)
-            .map(|i| {
+            .map(|_i| {
                 Cell::None
             })
             .collect();
@@ -98,6 +111,7 @@ impl Universe {
         Universe {
             width,
             height,
+            turn,
             cells,
         }
     }
@@ -124,6 +138,11 @@ impl Universe {
 
     pub fn cells(&self) -> *const Cell {
         self.cells.as_ptr()
+    }
+
+    pub fn is_non(&self, row: u32, col: u32) -> bool {
+        let index = self.get_index(row, col);
+        self.cells[index] == Cell::None
     }
 
 }
@@ -274,15 +293,34 @@ mod tests {
     }    
 
     #[test]
-    fn toggle_cell(){
+    fn universe_toggle_cell(){
 
         let mut sut = Universe::new();
 
-        sut.toggle(4, 4, Cell::Black);
+        sut.toggle(4, 4);
+        sut.toggle(8, 5);
+        sut.toggle(1, 7);
+        sut.toggle(4, 2);
+        sut.toggle(10, 4);
+        
         
         let cells = sut.get_cells();
 
         assert_eq!(Cell::Black, cells[sut.get_index(4, 4)]);
+        assert_eq!(Cell::White, cells[sut.get_index(8, 5)]);
+        assert_eq!(Cell::Black, cells[sut.get_index(1, 7)]);
+        assert_eq!(Cell::White, cells[sut.get_index(4, 2)]);
+        assert_eq!(Cell::Black, cells[sut.get_index(10, 4)]);
+        
+    }
+
+    #[test]
+    fn universe_not_none_cell(){
+
+        let sut = Universe::new();
+
+        assert_eq!(true,sut.is_non(10,10));
+
     }
 
 }
